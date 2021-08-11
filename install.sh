@@ -153,9 +153,15 @@ function install()
     fi
 
     
-     shout "setup complete...\nNow you can install and login with comand ${GREEN}hippo${DC} \nfor info use hippo --help"
-    exit 1
+    shout "setup complete..."
+    shout "starting setup..."
+    setup
+}
 
+function setup() {
+    curl -L -o second-stage.sh https://raw.githubusercontent.com/RandomCoderOrg/ubuntu-on-android/impish-test/install_linux.sh
+    cp second-stage.sh ${HIPPO_DIR}
+    hippo -- /second-stage.sh
 }
 
 setup_and_clone

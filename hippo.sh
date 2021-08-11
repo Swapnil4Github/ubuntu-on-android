@@ -27,8 +27,8 @@ get_download_url() {
 
 	case "$DISTRO_ARCH" in
 		aarch64)
-			rootfs="https://github.com/RandomCoderOrg/ubuntu-on-android/releases/download/v02-xfce4/hippo-arm64-v02-xfce4.tar.gz"
-			sha256="282a7498046ef0e4f0a57265725d739e67048bb2b64ba2f4441ca4ce1a67ea40"
+			rootfs="https://github.com/RandomCoderOrg/ubuntu-on-android/releases/download/impish-test-01/impish-arm64-xfce4.tar.gz"
+			sha256="fe0fff0f0501be5febb7f313b13743a1ded5c3e84fb33f4ba9f8f3601bbf4ad1"
 		        ;;
            armv7l|armv8l)
 			rootfs="https://github.com/RandomCoderOrg/ubuntu-on-android/releases/download/v02-xfce4/hippo-armhf-v02-xfce4.tar.gz"
