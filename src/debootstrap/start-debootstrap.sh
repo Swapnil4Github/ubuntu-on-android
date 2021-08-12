@@ -68,8 +68,30 @@ function make_sure_of_root()
 
 function de_debootstarp()
 {
-    :
-    # TODO: Implement multiarch and complete this function
+    # make folder
+    if [ -d ~/rootfs-build ]; then
+        die "Folder ~/rootfs-build already exists..."
+    fi
+    
+    mkdir -pv ~/rootfs-build
+    
+    # Do Download first
+    for b_arch in {arm64,armhf,amd64}; do
+        shout "Getting things for ${b_arch}"
+        mkdir -pv ~/rootfs-build/impish-"$b_arch"
+        sudo debootstrap \
+            --foreign    \
+            --arch="${b_arch}" \
+            --include=udisk2,fprintd \
+            ~/rootfs-build/impish-"$b_arch" \
+            impish
+        shout "Done!"
+    done
+    for b_arch in {arm64,armhf,amd64}; do
+        shout "Getting things for ${b_arch}"
+            #TODO: multiarch thing
+        shout "Done!"
+    done
 }
 
 #TODO: add entry point and conditions
