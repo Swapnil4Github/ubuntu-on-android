@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#!/usr/bin/env bash
+build_root="~/rootfs-build"
 
 # * Deafault color is Blue
 RST="\e[0m"
@@ -22,13 +22,15 @@ shout  () { echo -e "${DC}-----";echo -e "${*}";echo -e "-----${RST}";:; }
 lshout () { echo -e "${DC}";echo -e "${*}";echo -e "${RST}";:; }
 
 sys_arch="$(uname -m)"
-codename="$()"
+codename="$()" # debootstrap only work in latest ubunbtu -> impish
 
 function mount_fs()
 {
-    m_points="/dev /proc /sys"
+    m_points="dev proc sys"
     if [ ! -d "$1" ]; then
         die "Error: Directory $1 is no such directory found.."
+    else
+        mkdir -p "$build_root"
     fi
 
     for points in $m_points; do
@@ -45,9 +47,9 @@ function mount_fs()
         add_args="echo \"$spasswd\" | sudo -S"
     fi
 
-    "$add_args" mount -t proc /proc proc/ || die "Mount Error"
-    "$add_args" mount -t sysfs /sys sys/ || die "Mount Error"
-    "$add_args" mount --rbind /dev dev/ || die "Mount Error"
+    "$add_args" mount -t proc /proc "${1}"/proc/ || die "Mount Error"
+    "$add_args" mount -t sysfs /sys "${1}"/sys/ || die "Mount Error"
+    "$add_args" mount --rbind /dev "${1}"/dev/ || die "Mount Error"
 }
 
 function make_sure_of_root()
@@ -87,11 +89,39 @@ function de_debootstarp()
             impish
         shout "Done!"
     done
+    unset b_arch
     for b_arch in {arm64,armhf,amd64}; do
         shout "Getting things for ${b_arch}"
-            #TODO: multiarch thing
+            "$add_args" mount_fs "${build-root}/impish-${b_arch}"
+            "$add_args" cp "/bin/qemu-$(arch_translate "${b_arch}")-static" "${build-root}/impish-${b_arch}"
+            "$add_args" chroot "${build-root}/impish-${b_arch}" /bin/bash /debootstrap/debootstrap --second-stage
         shout "Done!"
     done
+    unset b_arch
+    #TODO: algo to make tarballs
 }
 
-#TODO: add entry point and conditions
+function arch_traslate()
+{
+    case $VAR in
+        "arm64") echo "aarch64"
+        ;;
+        "armhf") echo "armhf"
+        ;;
+        "amd64") echo "x86_64"
+        ;;
+        *) echo default
+        ;;
+    esac
+    
+}
+
+# function do_second_stage()
+# {
+#     fs_dir=
+#     for b_arch in {arm64,armhf,amd64}; do
+#         cp "/bin/qemu-$(arch_translate ${b_arch})-static" 
+#     done
+# }
+de_debootstarp
+#TODO: Test and make fixes
